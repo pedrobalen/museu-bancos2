@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Tabelas Auxiliares</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #f4f7f6; --card-bg: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        
+        header { background: #34495e; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; margin: 0; }
+        
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .back-link { color: white; text-decoration: none; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .back-link:hover { text-decoration: underline; }
+
+        .aux-container { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .aux-column { flex: 1; min-width: 300px; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.2rem; }
+        
+        .inline-form { display: flex; gap: 10px; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; }
+        .inline-form input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-add { padding: 8px 15px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-add:hover { background: #d35400; }
+
+        .aux-list { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
+        .aux-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .aux-item:last-child { border-bottom: none; }
+        .btn-del { background: #e74c3c; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;}
+        .id-badge { background: #eee; color: #666; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 10px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="index.html" class="back-link">← Voltar para Acervo</a>
+            <h1>⚙️ Gestão de Cadastros</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="aux-container">
+            
+            <!-- AUTORES -->
+            <div class="aux-column">
+                <h2>👤 Autores</h2>
+                <form class="inline-form" onsubmit="addAuxiliar(event, 'autores')">
+                    <input type="text" id="newAutor" placeholder="Nome do autor..." required>
+                    <button type="submit" class="btn-add">+</button>
+                </form>
+                <ul id="listAutores" class="aux-list">Carregando...</ul>
+            </div>
+
+            <!-- EDITORAS -->
+            <div class="aux-column">
+                <h2>🏢 Editoras</h2>
+                <form class="inline-form" onsubmit="addAuxiliar(event, 'editoras')">
+                    <input type="text" id="newEditora" placeholder="Nome da editora..." required>
+                    <button type="submit" class="btn-add">+</button>
+                </form>
+                <ul id="listEditoras" class="aux-list">Carregando...</ul>
+            </div>
+
+            <!-- DOADORES -->
+            <div class="aux-column">
+                <h2>🎁 Doadores</h2>
+                <form class="inline-form" onsubmit="addAuxiliar(event, 'doadores')">
+                    <input type="text" id="newDoador" placeholder="Nome do doador..." required>
+                    <button type="submit" class="btn-add">+</button>
+                </form>
+                <ul id="listDoadores" class="aux-list">Carregando...</ul>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const getApiUrl = () => {
+            if (window.location.protocol === 'file:' || window.location.protocol === 'blob:') return 'http://localhost:3000/api';
+            return '/api';
+        };
+        const API = getApiUrl();
+
+        document.addEventListener('DOMContentLoaded', loadAll);
+
+        async function loadAll() {
+            await Promise.all([loadList('autores'), loadList('editoras'), loadList('doadores')]);
+        }
+
+        async function loadList(type) {
+            // Mapeia IDs e Nomes baseado no tipo
+            let listId, nameField, idField;
+            if(type === 'autores') { listId = 'listAutores'; nameField = 'nome_autor'; idField = 'id_autor'; }
+            else if(type === 'editoras') { listId = 'listEditoras'; nameField = 'nome_editora'; idField = 'id_editora'; }
+            else { listId = 'listDoadores'; nameField = 'nome_doador'; idField = 'id_doador'; }
+
+            const listEl = document.getElementById(listId);
+            
+            try {
+                const res = await fetch(`${API}/${type}`);
+                if(res.ok) {
+                    const items = await res.json();
+                    
+                    listEl.innerHTML = items.map(item => `
+                        <li class="aux-item">
+                            <span>
+                                <span class="id-badge">#${item[idField]}</span>
+                                ${item[nameField]}
+                            </span>
+                            <button class="btn-del" onclick="deleteAux('${type}', ${item[idField]})">Excluir</button>
+                        </li>
+                    `).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function addAuxiliar(event, type) {
+            event.preventDefault();
+            let inputId, body;
+            
+            if(type === 'autores') { inputId = 'newAutor'; body = { nome_autor: document.getElementById(inputId).value }; }
+            else if(type === 'editoras') { inputId = 'newEditora'; body = { nome_editora: document.getElementById(inputId).value }; }
+            else { inputId = 'newDoador'; body = { nome_doador: document.getElementById(inputId).value }; }
+
+            try {
+                const res = await fetch(`${API}/${type}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(body)
+                });
+                if (res.ok) {
+                    document.getElementById(inputId).value = '';
+                    loadList(type);
+                } else alert('Erro ao adicionar.');
+            } catch (e) { console.error(e); }
+        }
+
+        async function deleteAux(type, id) {
+            if(!confirm('Tem certeza? Se este item estiver vinculado a algo no acervo, a exclusão será bloqueada.')) return;
+            try {
+                const res = await fetch(`${API}/${type}/${id}`, { method: 'DELETE' });
+                if(res.ok) loadList(type);
+                else {
+                    const err = await res.json();
+                    alert(err.error || 'Erro ao excluir.');
+                }
+            } catch (e) { console.error(e); }
+        }
+    </script>
+</body>
+</html>

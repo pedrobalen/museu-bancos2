@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museu Treze de Maio - Gestão de Acervo</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #f4f7f6; --card-bg: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        
+        header { background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; margin: 0; }
+        
+        .admin-link { background: rgba(255,255,255,0.1); color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-size: 0.9rem; transition: 0.2s; border: 1px solid transparent; }
+        .admin-link:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; }
+        .tab-btn { background: none; border: none; font-size: 1.1rem; padding: 0.8rem 1.5rem; cursor: pointer; color: #666; font-weight: bold; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--accent); }
+        .tab-btn:hover { color: var(--accent); }
+
+        .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.5rem; }
+        .search-box { flex: 1; position: relative; }
+        .search-box input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #ccc; outline: none; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: border 0.3s; }
+        .search-box input:focus { border-color: var(--accent); }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; white-space: nowrap; }
+        .btn-primary { background: var(--accent); }
+        .btn-primary:hover { background: #d35400; }
+        .btn-danger { background: #e74c3c; padding: 6px 12px; font-size: 0.85rem; }
+        .btn-edit { background: #3498db; padding: 6px 12px; font-size: 0.85rem; margin-right: 5px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        
+        .card-header { background: #34495e; color: white; padding: 0.8rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
+        .card-body { padding: 1.5rem; flex: 1; }
+        
+        /* --- CORREÇÃO DO TÍTULO AQUI --- */
+        .card-title { 
+            margin: 0 0 0.5rem 0; 
+            color: var(--primary); 
+            font-size: 1.25rem;
+            /* Força a quebra de palavras gigantes */
+            overflow-wrap: break-word; 
+            word-wrap: break-word; 
+            word-break: break-word;
+        }
+
+        .card-text { 
+            font-size: 0.9rem; 
+            color: #555; 
+            margin-bottom: 0.5rem;
+            overflow-wrap: break-word; 
+            word-wrap: break-word; 
+            word-break: break-word;
+            white-space: pre-wrap; 
+        }
+
+        .card-actions { padding: 1rem; background: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
+
+        .badge { background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
+        .badge-missing { background: #c0392b; }
+
+        .hidden { display: none; }
+        .empty-state { grid-column: 1 / -1; text-align: center; color: #7f8c8d; padding: 3rem; font-size: 1.1rem; background: #fff; border-radius: 8px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .form-row { display: flex; gap: 10px; }
+        .modal-footer { text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
+        .btn-sec { background: #95a5a6; color: white; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>🏛️ Museu Treze de Maio</h1>
+            <div style="font-size: 0.8rem; opacity: 0.8">Painel de Gestão</div>
+        </div>
+        <a href="admin.html" class="admin-link">⚙️ Gerenciar Autores/Editoras/Doadores</a>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('livros')">📚 Biblioteca</button>
+            <button class="tab-btn" onclick="switchTab('historico')">📜 Acervo Histórico</button>
+        </div>
+
+        <div class="toolbar" id="mainToolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Pesquisar..." onkeyup="handleSearch(this.value)">
+            </div>
+            <button id="btnNew" class="btn btn-primary" onclick="openModal()">+ Novo Livro</button>
+        </div>
+
+        <div id="loading" style="text-align: center; color: #666; padding: 2rem;">Carregando dados...</div>
+
+        <div id="livros-container" class="grid"></div>
+        <div id="historico-container" class="grid hidden"></div>
+    </div>
+
+    <!-- MODAL LIVRO -->
+    <div id="modalLivro" class="modal">
+        <div class="modal-content">
+            <h2 id="modalLivroTitle">Gerenciar Livro</h2>
+            <form id="formLivro">
+                <input type="hidden" id="livroId">
+                <div class="form-group">
+                    <label>Título do Livro</label>
+                    <input type="text" id="livroTitulo" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1">
+                        <label>Ano</label>
+                        <input type="number" id="livroAno" required>
+                    </div>
+                    <div class="form-group" style="flex: 1">
+                        <label>Chamada (Cód)</label>
+                        <input type="text" id="livroChamada" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1">
+                        <label>Autor</label>
+                        <select id="livroAutorId" required><option>Carregando...</option></select>
+                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Novo Autor?</a></div>
+                    </div>
+                    <div class="form-group" style="flex: 1">
+                        <label>Editora</label>
+                        <select id="livroEditoraId" required><option>Carregando...</option></select>
+                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Nova Editora?</a></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sec" onclick="closeModals()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Livro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL HISTÓRICO -->
+    <div id="modalHistorico" class="modal">
+        <div class="modal-content">
+            <h2 id="modalHistTitle">Gerenciar Item Histórico</h2>
+            <form id="formHistorico">
+                <input type="hidden" id="histId">
+                <div class="form-group">
+                    <label>Título / Identificação</label>
+                    <input type="text" id="histTitulo" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1">
+                        <label>Tipo de Item</label>
+                        <select id="histTipo" required>
+                            <option value="Carta">Carta</option>
+                            <option value="Foto">Foto</option>
+                            <option value="Documento">Documento</option>
+                            <option value="Objeto">Objeto</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1">
+                        <label>Data do Item</label>
+                        <input type="date" id="histData">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descrição Detalhada</label>
+                    <textarea id="histDescricao" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1">
+                        <label>Doador (Opcional)</label>
+                        <select id="histDoadorId">
+                            <option value="">Anônimo / Nenhum</option>
+                        </select>
+                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Novo Doador?</a></div>
+                    </div>
+                    <div class="form-group" style="flex: 1; display: flex; align-items: center; margin-top: 25px;">
+                        <input type="checkbox" id="histDigitalizado" style="width: auto; margin-right: 10px;">
+                        <label for="histDigitalizado" style="margin:0; cursor: pointer;">Já Digitalizado?</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sec" onclick="closeModals()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const getApiUrl = () => {
+            if (window.location.protocol === 'file:' || window.location.protocol === 'blob:') return 'http://localhost:3000/api';
+            return '/api';
+        };
+        const API = getApiUrl();
+        
+        let currentTab = 'livros';
+        let isEditing = false;
+        let searchTimeout = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLivros();
+            loadHistorico();
+            populateSelects(); 
+        });
+
+        // --- POPULA OS DROPDOWNS ---
+        async function populateSelects() {
+            try {
+                const [resAuth, resEdit, resDoad] = await Promise.all([
+                    fetch(`${API}/autores`),
+                    fetch(`${API}/editoras`),
+                    fetch(`${API}/doadores`)
+                ]);
+
+                if(resAuth.ok) {
+                    const autores = await resAuth.json();
+                    document.getElementById('livroAutorId').innerHTML = '<option value="">Selecione...</option>' + 
+                        autores.map(a => `<option value="${a.id_autor}">${a.nome_autor}</option>`).join('');
+                }
+                if(resEdit.ok) {
+                    const editoras = await resEdit.json();
+                    document.getElementById('livroEditoraId').innerHTML = '<option value="">Selecione...</option>' + 
+                        editoras.map(e => `<option value="${e.id_editora}">${e.nome_editora}</option>`).join('');
+                }
+                if(resDoad.ok) {
+                    const doadores = await resDoad.json();
+                    document.getElementById('histDoadorId').innerHTML = '<option value="">Anônimo / Nenhum</option>' + 
+                        doadores.map(d => `<option value="${d.id_doador}">${d.nome_doador}</option>`).join('');
+                }
+            } catch (e) { console.error("Erro selects:", e); }
+        }
+
+        function handleSearch(term) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (currentTab === 'livros') loadLivros(term);
+                else loadHistorico(term);
+            }, 300);
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('searchInput').value = ''; 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+            document.getElementById('livros-container').classList.toggle('hidden', tab !== 'livros');
+            document.getElementById('historico-container').classList.toggle('hidden', tab !== 'historico');
+
+            document.getElementById('btnNew').innerText = tab === 'livros' ? '+ Novo Livro' : '+ Novo Item Histórico';
+            
+            if(tab === 'livros') loadLivros(); else loadHistorico();
+        }
+
+        async function loadLivros(query = '') {
+            try {
+                const url = query ? `${API}/livros?q=${encodeURIComponent(query)}` : `${API}/livros`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.length === 0) {
+                    document.getElementById('livros-container').innerHTML = `<div class="empty-state">Nada encontrado.</div>`;
+                    document.getElementById('loading').style.display = 'none';
+                    return;
+                }
+
+                document.getElementById('livros-container').innerHTML = data.map(l => `
+                    <div class="card">
+                        <div class="card-header"><span>📖 Livro</span> <span>${l.ano_publicacao || 'S/D'}</span></div>
+                        <div class="card-body">
+                            <h3 class="card-title">${l.titulo}</h3>
+                            <p class="card-text"><strong>Autor:</strong> ${l.nome_autor || '?'}</p>
+                            <p class="card-text"><strong>Editora:</strong> ${l.nome_editora || '?'}</p>
+                            <p class="card-text" style="color:#7f8c8d; font-size:0.8rem">Cod: ${l.chamada}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-edit" onclick='openEditLivro(${JSON.stringify(l)})'>Editar</button>
+                            <button class="btn btn-danger" onclick="deleteItem('livros', ${l.id_livro})">Excluir</button>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('loading').style.display = 'none';
+            } catch (e) { document.getElementById('loading').innerText = 'Erro conexão'; }
+        }
+
+        async function loadHistorico(query = '') {
+            try {
+                const url = query ? `${API}/historico?q=${encodeURIComponent(query)}` : `${API}/historico`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.length === 0) {
+                    document.getElementById('historico-container').innerHTML = `<div class="empty-state">Nada encontrado.</div>`;
+                    return;
+                }
+                document.getElementById('historico-container').innerHTML = data.map(h => `
+                    <div class="card">
+                        <div class="card-header" style="background: #2c3e50;">
+                            <span>📜 ${h.tipo_item}</span>
+                            ${h.foi_digitalizado ? '<span class="badge">Digitalizado</span>' : '<span class="badge badge-missing">Físico</span>'}
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">${h.titulo}</h3>
+                            <p class="card-text">${h.descricao || ''}</p>
+                            <p class="card-text"><strong>Data:</strong> ${h.data_item ? new Date(h.data_item).toLocaleDateString() : 'S/D'}</p>
+                            <p class="card-text" style="font-size:0.8rem"><strong>Doador:</strong> ${h.nome_doador || 'Anônimo/Desconhecido'}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-edit" onclick='openEditHistorico(${JSON.stringify(h)})'>Editar</button>
+                            <button class="btn btn-danger" onclick="deleteItem('historico', ${h.id_item})">Excluir</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // --- FORMS ---
+        document.getElementById('formLivro').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('livroId').value;
+            const body = {
+                titulo: document.getElementById('livroTitulo').value,
+                ano_publicacao: document.getElementById('livroAno').value,
+                chamada: document.getElementById('livroChamada').value,
+                id_autor: document.getElementById('livroAutorId').value,
+                id_editora: document.getElementById('livroEditoraId').value
+            };
+            await sendData('livros', body, id);
+        };
+
+        document.getElementById('formHistorico').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('histId').value;
+            const body = {
+                titulo: document.getElementById('histTitulo').value,
+                tipo_item: document.getElementById('histTipo').value,
+                data_item: document.getElementById('histData').value,
+                descricao: document.getElementById('histDescricao').value,
+                id_doador: document.getElementById('histDoadorId').value || null,
+                foi_digitalizado: document.getElementById('histDigitalizado').checked
+            };
+            await sendData('historico', body, id);
+        };
+
+        async function sendData(entity, body, id) {
+            const method = isEditing ? 'PUT' : 'POST';
+            const url = isEditing ? `${API}/${entity}/${id}` : `${API}/${entity}`;
+            try {
+                const res = await fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+                if(res.ok) { closeModals(); if(entity === 'livros') loadLivros(); else loadHistorico(); } 
+                else alert('Erro ao salvar.');
+            } catch (e) { console.error(e); }
+        }
+
+        async function deleteItem(entity, id) {
+            if(!confirm('Tem certeza?')) return;
+            try {
+                const res = await fetch(`${API}/${entity}/${id}`, { method: 'DELETE' });
+                if(res.ok) { if(entity === 'livros') loadLivros(); else loadHistorico(); }
+                else alert('Erro ao excluir.');
+            } catch(e) { console.error(e); }
+        }
+
+        function openModal() {
+            isEditing = false;
+            if(currentTab === 'livros') {
+                document.getElementById('formLivro').reset();
+                populateSelects(); 
+                document.getElementById('modalLivroTitle').innerText = 'Novo Livro';
+                document.getElementById('modalLivro').style.display = 'block';
+            } else {
+                document.getElementById('formHistorico').reset();
+                populateSelects(); // Atualiza doadores também
+                document.getElementById('modalHistTitle').innerText = 'Novo Item Histórico';
+                document.getElementById('modalHistorico').style.display = 'block';
+            }
+        }
+        function openEditLivro(item) {
+            isEditing = true;
+            populateSelects().then(() => {
+                document.getElementById('livroId').value = item.id_livro;
+                document.getElementById('livroTitulo').value = item.titulo;
+                document.getElementById('livroAno').value = item.ano_publicacao;
+                document.getElementById('livroChamada').value = item.chamada;
+                document.getElementById('livroAutorId').value = item.id_autor;
+                document.getElementById('livroEditoraId').value = item.id_editora;
+                document.getElementById('modalLivroTitle').innerText = 'Editar Livro';
+                document.getElementById('modalLivro').style.display = 'block';
+            });
+        }
+        function openEditHistorico(item) {
+            isEditing = true;
+            populateSelects().then(() => {
+                document.getElementById('histId').value = item.id_item;
+                document.getElementById('histTitulo').value = item.titulo;
+                document.getElementById('histTipo').value = item.tipo_item;
+                if(item.data_item) document.getElementById('histData').value = item.data_item.split('T')[0];
+                document.getElementById('histDescricao').value = item.descricao;
+                document.getElementById('histDoadorId').value = item.id_doador;
+                document.getElementById('histDigitalizado').checked = item.foi_digitalizado;
+                document.getElementById('modalHistTitle').innerText = 'Editar Item Histórico';
+                document.getElementById('modalHistorico').style.display = 'block';
+            });
+        }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        window.onclick = function(event) { if (event.target.classList.contains('modal')) closeModals(); }
+    </script>
+</body>
+</html>
