@@ -759,3 +759,37 @@ ALTER TABLE ONLY public.usuario
 
 \unrestrict DJDlOQySv3P5HKntWwSUUu12yKPTRHEdcgAciM6vmVJJR0PlJIGTaUF6WxBiNXA
 
+
+-- 10 Queries
+-- 1. Relatório que conta quantos livros e exemplares existem por Autor e Editora
+SELECT a.nome_autor, e.nome_editora, COUNT(l.id_livro) as titulos, SUM(l.quantidade_total) as exemplares FROM livro l JOIN autor a ON l.id_autor = a.id_autor JOIN editora e ON l.id_editora = e.id_editora GROUP BY a.nome_autor, e.nome_editora ORDER BY exemplares DESC;
+
+-- 2. Filtra autores que possuem mais de 2 títulos diferentes cadastrados (HAVING)
+SELECT a.nome_autor, COUNT(l.id_livro) as qtd_titulos FROM livro l JOIN autor a ON l.id_autor = a.id_autor GROUP BY a.nome_autor HAVING COUNT(l.id_livro) > 2;
+
+-- 3. Função que retorna o status textual do livro baseado no estoque
+CREATE OR REPLACE FUNCTION obter_status_livro(disp INT, min INT) RETURNS TEXT AS $$ BEGIN IF disp = 0 THEN RETURN 'Esgotado'; ELSIF disp <= min THEN RETURN 'Reserva Técnica'; ELSE RETURN 'Disponível'; END IF; END; $$ LANGUAGE plpgsql;
+
+-- 4. Trigger de Auditoria que salva cópia de livros deletados em uma tabela de log
+CREATE TABLE IF NOT EXISTS log_livro_del (id SERIAL PRIMARY KEY, titulo VARCHAR(400), data_del TIMESTAMP DEFAULT NOW(), user_db VARCHAR(50));
+CREATE OR REPLACE FUNCTION func_audit_del() RETURNS TRIGGER AS $$ BEGIN INSERT INTO log_livro_del (titulo, user_db) VALUES (OLD.titulo, current_user); RETURN OLD; END; $$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_audit_del AFTER DELETE ON livro FOR EACH ROW EXECUTE FUNCTION func_audit_del();
+
+-- 5. Procedure para cadastrar doador verificando antes se já existe para evitar erros
+CREATE OR REPLACE PROCEDURE add_doador_safe(nome VARCHAR) LANGUAGE plpgsql AS $$ BEGIN IF NOT EXISTS (SELECT 1 FROM doador WHERE nome_doador ILIKE nome) THEN INSERT INTO doador (nome_doador) VALUES (nome); END IF; END; $$;
+
+-- 6. Busca Unificada (Union) que procura o termo 'História' tanto em livros quanto no museu
+SELECT 'Livro' as tipo, titulo, assunto as info FROM livro WHERE titulo ILIKE '%História%' UNION ALL SELECT 'Museu' as tipo, titulo, descricao as info FROM item_historico WHERE titulo ILIKE '%História%';
+
+-- 7. Trigger de Validação que impede cadastro de itens históricos com data futura
+CREATE OR REPLACE FUNCTION check_data_futura() RETURNS TRIGGER AS $$ BEGIN IF NEW.data_item > CURRENT_DATE THEN RAISE EXCEPTION 'Data futura inválida'; END IF; RETURN NEW; END; $$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_check_data BEFORE INSERT OR UPDATE ON item_historico FOR EACH ROW EXECUTE FUNCTION check_data_futura();
+
+-- 8. Agrupamento matemático mostrando a quantidade de itens históricos por década
+SELECT (CAST(EXTRACT(YEAR FROM data_item) AS INT) / 10) * 10 || 's' AS decada, COUNT(*) FROM item_historico WHERE data_item IS NOT NULL GROUP BY decada ORDER BY decada;
+
+-- 9. View que simplifica a consulta trazendo nomes de Autor e Editora já resolvidos
+CREATE OR REPLACE VIEW view_livros_full AS SELECT l.id_livro, l.titulo, a.nome_autor, e.nome_editora, l.quantidade_disponivel FROM livro l LEFT JOIN autor a ON l.id_autor = a.id_autor LEFT JOIN editora e ON l.id_editora = e.id_editora;
+
+-- 10. Subquery que lista os Top 5 doadores com base na contagem de itens doados
+SELECT d.nome_doador, (SELECT COUNT(*) FROM item_historico i WHERE i.id_doador = d.id_doador) as total FROM doador d ORDER BY total DESC LIMIT 5;
