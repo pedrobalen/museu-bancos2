@@ -16,20 +16,49 @@
         .back-link:hover { text-decoration: underline; }
 
         .aux-container { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .aux-column { flex: 1; min-width: 300px; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .aux-column { flex: 1; min-width: 300px; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         
-        h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.2rem; }
+        h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
         
-        .inline-form { display: flex; gap: 10px; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 6px; }
-        .inline-form input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .btn-add { padding: 8px 15px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* Form de Adicionar */
+        .inline-form { display: flex; gap: 10px; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
+        .inline-form input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
+        .inline-form input:focus { border-color: var(--accent); }
+        .btn-add { padding: 8px 15px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .btn-add:hover { background: #d35400; }
 
-        .aux-list { list-style: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
-        .aux-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        /* Barra de Pesquisa Local */
+        .search-bar-local {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 10px center;
+            background-color: #fff;
+            padding-left: 35px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .search-bar-local:focus { border-color: #34495e; }
+
+        .aux-list { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; max-height: 500px; border-top: 1px solid #eee; }
+        .aux-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border-bottom: 1px solid #f5f5f5; transition: background 0.1s; }
+        .aux-item:hover { background: #fafafa; }
         .aux-item:last-child { border-bottom: none; }
-        .btn-del { background: #e74c3c; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-left: 10px;}
-        .id-badge { background: #eee; color: #666; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 10px; font-family: monospace; }
+        
+        .btn-del { background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; margin-left: 10px; opacity: 0.7; transition: 0.2s; }
+        .btn-del:hover { opacity: 1; }
+        
+        .id-badge { background: #eee; color: #666; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; margin-right: 8px; font-family: monospace; min-width: 25px; text-align: center; display: inline-block; }
+        .item-name { font-weight: 500; color: #333; }
+        
+        /* Scrollbar bonitinha */
+        .aux-list::-webkit-scrollbar { width: 6px; }
+        .aux-list::-webkit-scrollbar-track { background: #f1f1f1; }
+        .aux-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -44,33 +73,51 @@
     <div class="container">
         <div class="aux-container">
             
-            <!-- AUTORES -->
             <div class="aux-column">
-                <h2>👤 Autores</h2>
+                <h2>
+                    👤 Autores 
+                    <span id="countAutores" style="font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px;">0</span>
+                </h2>
+                
                 <form class="inline-form" onsubmit="addAuxiliar(event, 'autores')">
-                    <input type="text" id="newAutor" placeholder="Nome do autor..." required>
+                    <input type="text" id="newAutor" placeholder="Novo autor..." required>
                     <button type="submit" class="btn-add">+</button>
                 </form>
+
+                <input type="text" class="search-bar-local" placeholder="Buscar autor..." onkeyup="filterLocalList(this, 'listAutores')">
+                
                 <ul id="listAutores" class="aux-list">Carregando...</ul>
             </div>
 
-            <!-- EDITORAS -->
             <div class="aux-column">
-                <h2>🏢 Editoras</h2>
+                <h2>
+                    🏢 Editoras
+                    <span id="countEditoras" style="font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px;">0</span>
+                </h2>
+                
                 <form class="inline-form" onsubmit="addAuxiliar(event, 'editoras')">
-                    <input type="text" id="newEditora" placeholder="Nome da editora..." required>
+                    <input type="text" id="newEditora" placeholder="Nova editora..." required>
                     <button type="submit" class="btn-add">+</button>
                 </form>
+
+                <input type="text" class="search-bar-local" placeholder="Buscar editora..." onkeyup="filterLocalList(this, 'listEditoras')">
+
                 <ul id="listEditoras" class="aux-list">Carregando...</ul>
             </div>
 
-            <!-- DOADORES -->
             <div class="aux-column">
-                <h2>🎁 Doadores</h2>
+                <h2>
+                    🎁 Doadores
+                    <span id="countDoadores" style="font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px;">0</span>
+                </h2>
+                
                 <form class="inline-form" onsubmit="addAuxiliar(event, 'doadores')">
-                    <input type="text" id="newDoador" placeholder="Nome do doador..." required>
+                    <input type="text" id="newDoador" placeholder="Novo doador..." required>
                     <button type="submit" class="btn-add">+</button>
                 </form>
+
+                <input type="text" class="search-bar-local" placeholder="Buscar doador..." onkeyup="filterLocalList(this, 'listDoadores')">
+
                 <ul id="listDoadores" class="aux-list">Carregando...</ul>
             </div>
 
@@ -91,26 +138,33 @@
         }
 
         async function loadList(type) {
-            // Mapeia IDs e Nomes baseado no tipo
-            let listId, nameField, idField;
-            if(type === 'autores') { listId = 'listAutores'; nameField = 'nome_autor'; idField = 'id_autor'; }
-            else if(type === 'editoras') { listId = 'listEditoras'; nameField = 'nome_editora'; idField = 'id_editora'; }
-            else { listId = 'listDoadores'; nameField = 'nome_doador'; idField = 'id_doador'; }
+            let listId, nameField, idField, countId;
+            if(type === 'autores') { listId = 'listAutores'; nameField = 'nome_autor'; idField = 'id_autor'; countId = 'countAutores'; }
+            else if(type === 'editoras') { listId = 'listEditoras'; nameField = 'nome_editora'; idField = 'id_editora'; countId = 'countEditoras'; }
+            else { listId = 'listDoadores'; nameField = 'nome_doador'; idField = 'id_doador'; countId = 'countDoadores'; }
 
             const listEl = document.getElementById(listId);
+            const countEl = document.getElementById(countId);
             
             try {
                 const res = await fetch(`${API}/${type}`);
                 if(res.ok) {
                     const items = await res.json();
                     
+                    countEl.innerText = items.length; // Atualiza o contador
+
+                    if (items.length === 0) {
+                        listEl.innerHTML = '<li style="padding:10px; color:#999; text-align:center;">Nenhum cadastrado</li>';
+                        return;
+                    }
+                    
                     listEl.innerHTML = items.map(item => `
                         <li class="aux-item">
-                            <span>
-                                <span class="id-badge">#${item[idField]}</span>
+                            <span class="item-name">
+                                <span class="id-badge">${item[idField]}</span>
                                 ${item[nameField]}
                             </span>
-                            <button class="btn-del" onclick="deleteAux('${type}', ${item[idField]})">Excluir</button>
+                            <button class="btn-del" onclick="deleteAux('${type}', ${item[idField]})" title="Excluir">🗑</button>
                         </li>
                     `).join('');
                 }
@@ -148,6 +202,27 @@
                     alert(err.error || 'Erro ao excluir.');
                 }
             } catch (e) { console.error(e); }
+        }
+
+        // --- FUNÇÃO DE FILTRO LOCAL ---
+        function filterLocalList(input, listId) {
+            const term = input.value.toLowerCase();
+            const list = document.getElementById(listId);
+            const items = list.getElementsByTagName('li');
+
+            // Percorre cada item da lista (LI)
+            for (let i = 0; i < items.length; i++) {
+                const span = items[i].querySelector('.item-name');
+                if (span) {
+                    const text = span.textContent || span.innerText;
+                    // Se o texto bater, mostra (display vazio), senão esconde (none)
+                    if (text.toLowerCase().indexOf(term) > -1) {
+                        items[i].style.display = "";
+                    } else {
+                        items[i].style.display = "none";
+                    }
+                }
+            }
         }
     </script>
 </body>
