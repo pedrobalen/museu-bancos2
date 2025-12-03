@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:17-alpine
+    container_name: postgres_arcevo
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ArcevoBiblioteca
+    ports:
+      - "5432:5432" 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - arcevo_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_arcevo
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80" 
+    depends_on:
+      - postgres_db
+    networks:
+      - arcevo_network
+
+volumes:
+  postgres_data:
+
+networks:
+  arcevo_network:
