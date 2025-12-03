@@ -19,62 +19,48 @@
         .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; }
         .tab-btn { background: none; border: none; font-size: 1.1rem; padding: 0.8rem 1.5rem; cursor: pointer; color: #666; font-weight: bold; border-bottom: 3px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--accent); }
-        .tab-btn:hover { color: var(--accent); }
-
+        
         .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.5rem; }
-        .search-box { flex: 1; position: relative; }
-        .search-box input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #ccc; outline: none; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: border 0.3s; }
-        .search-box input:focus { border-color: var(--accent); }
+        .search-box { flex: 1; }
+        .search-box input { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #ccc; font-size: 1rem; }
 
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; white-space: nowrap; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
         .btn-primary { background: var(--accent); }
-        .btn-primary:hover { background: #d35400; }
         .btn-danger { background: #e74c3c; padding: 6px 12px; font-size: 0.85rem; }
         .btn-edit { background: #3498db; padding: 6px 12px; font-size: 0.85rem; margin-right: 5px; }
+        .btn-view { background: #2c3e50; padding: 6px 12px; font-size: 0.85rem; margin-right: 5px; }
+        .btn-sec { background: #95a5a6; color: white; margin-right: 10px; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
-        .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; }
         
-        .card-header { background: #34495e; color: white; padding: 0.8rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; }
+        .card-header { background: #34495e; color: white; padding: 0.8rem; font-size: 0.9rem; text-transform: uppercase; display: flex; justify-content: space-between; }
         .card-body { padding: 1.5rem; flex: 1; }
-        
-        /* --- CORREÇÃO DO TÍTULO AQUI --- */
-        .card-title { 
-            margin: 0 0 0.5rem 0; 
-            color: var(--primary); 
-            font-size: 1.25rem;
-            /* Força a quebra de palavras gigantes */
-            overflow-wrap: break-word; 
-            word-wrap: break-word; 
-            word-break: break-word;
-        }
-
-        .card-text { 
-            font-size: 0.9rem; 
-            color: #555; 
-            margin-bottom: 0.5rem;
-            overflow-wrap: break-word; 
-            word-wrap: break-word; 
-            word-break: break-word;
-            white-space: pre-wrap; 
-        }
-
+        .card-title { margin: 0 0 0.5rem 0; color: var(--primary); font-size: 1.25rem; }
+        .card-text { font-size: 0.9rem; color: #555; margin-bottom: 0.5rem; }
         .card-actions { padding: 1rem; background: #f8f9fa; border-top: 1px solid #eee; text-align: right; }
-
         .badge { background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
         .badge-missing { background: #c0392b; }
-
         .hidden { display: none; }
-        .empty-state { grid-column: 1 / -1; text-align: center; color: #7f8c8d; padding: 3rem; font-size: 1.1rem; background: #fff; border-radius: 8px; }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        /* Modais */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); overflow-y: auto; }
         .modal-content { background-color: #fff; margin: 5% auto; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        #modalDetalhes .modal-content { max-width: 800px; width: 95%; }
+        .detalhes-container { display: flex; gap: 2rem; align-items: flex-start; }
+        .detalhes-img-wrapper { flex: 1; text-align: center; background: #f0f0f0; padding: 10px; border-radius: 8px; min-height: 200px; }
+        .detalhes-img-wrapper img { max-width: 100%; max-height: 500px; object-fit: contain; }
+        .detalhes-info { flex: 1.5; }
+        .info-row { margin-bottom: 12px; font-size: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+
+        @media (max-width: 700px) { .detalhes-container { flex-direction: column; } }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         .form-row { display: flex; gap: 10px; }
-        .modal-footer { text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; }
-        .btn-sec { background: #95a5a6; color: white; margin-right: 10px; }
+        .modal-footer { text-align: right; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -84,7 +70,7 @@
             <h1>🏛️ Museu Treze de Maio</h1>
             <div style="font-size: 0.8rem; opacity: 0.8">Painel de Gestão</div>
         </div>
-        <a href="admin.html" class="admin-link">⚙️ Gerenciar Autores/Editoras/Doadores</a>
+        <a href="admin.html" class="admin-link">⚙️ Cadastros Auxiliares</a>
     </header>
 
     <div class="container">
@@ -93,7 +79,7 @@
             <button class="tab-btn" onclick="switchTab('historico')">📜 Acervo Histórico</button>
         </div>
 
-        <div class="toolbar" id="mainToolbar">
+        <div class="toolbar">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Pesquisar..." onkeyup="handleSearch(this.value)">
             </div>
@@ -106,7 +92,6 @@
         <div id="historico-container" class="grid hidden"></div>
     </div>
 
-    <!-- MODAL LIVRO -->
     <div id="modalLivro" class="modal">
         <div class="modal-content">
             <h2 id="modalLivroTitle">Gerenciar Livro</h2>
@@ -122,34 +107,43 @@
                         <input type="number" id="livroAno" required>
                     </div>
                     <div class="form-group" style="flex: 1">
-                        <label>Chamada (Cód)</label>
-                        <input type="text" id="livroChamada" required>
+                        <label title="Quantidade Total Comprada">Qtd. Total</label>
+                        <input type="number" id="livroQtd" value="1" min="1" required>
                     </div>
+                    <div class="form-group" style="flex: 1">
+                        <label title="Mínimo que deve ficar na biblioteca">Reserva</label>
+                        <input type="number" id="livroMin" value="1" min="0" required>
+                    </div>
+                    </div>
+                <div class="form-group">
+                    <label>Chamada (Cód)</label>
+                    <input type="text" id="livroChamada" required>
+                </div>
+                <div class="form-group">
+                    <label>URL da Capa</label>
+                    <input type="url" id="livroCapa" placeholder="http://...">
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 1">
                         <label>Autor</label>
-                        <select id="livroAutorId" required><option>Carregando...</option></select>
-                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Novo Autor?</a></div>
+                        <select id="livroAutorId" required><option>...</option></select>
                     </div>
                     <div class="form-group" style="flex: 1">
                         <label>Editora</label>
-                        <select id="livroEditoraId" required><option>Carregando...</option></select>
-                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Nova Editora?</a></div>
+                        <select id="livroEditoraId" required><option>...</option></select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sec" onclick="closeModals()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Livro</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL HISTÓRICO -->
     <div id="modalHistorico" class="modal">
         <div class="modal-content">
-            <h2 id="modalHistTitle">Gerenciar Item Histórico</h2>
+            <h2>Gerenciar Item Histórico</h2>
             <form id="formHistorico">
                 <input type="hidden" id="histId">
                 <div class="form-group">
@@ -158,7 +152,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 1">
-                        <label>Tipo de Item</label>
+                        <label>Tipo</label>
                         <select id="histTipo" required>
                             <option value="Carta">Carta</option>
                             <option value="Foto">Foto</option>
@@ -168,45 +162,62 @@
                         </select>
                     </div>
                     <div class="form-group" style="flex: 1">
-                        <label>Data do Item</label>
+                        <label>Data</label>
                         <input type="date" id="histData">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Descrição Detalhada</label>
+                    <label>Descrição</label>
                     <textarea id="histDescricao" rows="3"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 1">
-                        <label>Doador (Opcional)</label>
-                        <select id="histDoadorId">
-                            <option value="">Anônimo / Nenhum</option>
-                        </select>
-                        <div style="text-align: right; font-size: 0.8rem;"><a href="admin.html" target="_blank">Novo Doador?</a></div>
+                        <label>Doador</label>
+                        <select id="histDoadorId"><option value="">Anônimo</option></select>
                     </div>
                     <div class="form-group" style="flex: 1; display: flex; align-items: center; margin-top: 25px;">
                         <input type="checkbox" id="histDigitalizado" style="width: auto; margin-right: 10px;">
-                        <label for="histDigitalizado" style="margin:0; cursor: pointer;">Já Digitalizado?</label>
+                        <label for="histDigitalizado" style="margin:0;">Digitalizado?</label>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label>Link Arquivo</label>
+                    <input type="url" id="histArquivo">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sec" onclick="closeModals()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Item</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div id="modalDetalhes" class="modal">
+        <div class="modal-content">
+            <div style="text-align: right;">
+                <button type="button" class="btn btn-sec" onclick="document.getElementById('modalDetalhes').style.display='none'" style="padding: 5px 10px;">✕ Fechar</button>
+            </div>
+            <div class="detalhes-container">
+                <div class="detalhes-img-wrapper">
+                    <img id="detalheImg" src="" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div style="display:none; color: #999;">Sem imagem</div>
+                </div>
+                <div class="detalhes-info">
+                    <h2 id="detalheTitulo"></h2>
+                    <div id="detalheConteudo"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const getApiUrl = () => {
-            if (window.location.protocol === 'file:' || window.location.protocol === 'blob:') return 'http://localhost:3000/api';
-            return '/api';
-        };
-        const API = getApiUrl();
-        
+        const API = '/api';
         let currentTab = 'livros';
         let isEditing = false;
         let searchTimeout = null;
+
+        // Armazena dados globais para acesso do Modal de Detalhes
+        window.currentData = { livros: [], historico: [] };
 
         document.addEventListener('DOMContentLoaded', () => {
             loadLivros();
@@ -214,29 +225,22 @@
             populateSelects(); 
         });
 
-        // --- POPULA OS DROPDOWNS ---
         async function populateSelects() {
             try {
                 const [resAuth, resEdit, resDoad] = await Promise.all([
-                    fetch(`${API}/autores`),
-                    fetch(`${API}/editoras`),
-                    fetch(`${API}/doadores`)
+                    fetch(`${API}/autores`), fetch(`${API}/editoras`), fetch(`${API}/doadores`)
                 ]);
-
                 if(resAuth.ok) {
-                    const autores = await resAuth.json();
-                    document.getElementById('livroAutorId').innerHTML = '<option value="">Selecione...</option>' + 
-                        autores.map(a => `<option value="${a.id_autor}">${a.nome_autor}</option>`).join('');
+                    const data = await resAuth.json();
+                    document.getElementById('livroAutorId').innerHTML = '<option value="">Selecione...</option>' + data.map(a => `<option value="${a.id_autor}">${a.nome_autor}</option>`).join('');
                 }
                 if(resEdit.ok) {
-                    const editoras = await resEdit.json();
-                    document.getElementById('livroEditoraId').innerHTML = '<option value="">Selecione...</option>' + 
-                        editoras.map(e => `<option value="${e.id_editora}">${e.nome_editora}</option>`).join('');
+                    const data = await resEdit.json();
+                    document.getElementById('livroEditoraId').innerHTML = '<option value="">Selecione...</option>' + data.map(e => `<option value="${e.id_editora}">${e.nome_editora}</option>`).join('');
                 }
                 if(resDoad.ok) {
-                    const doadores = await resDoad.json();
-                    document.getElementById('histDoadorId').innerHTML = '<option value="">Anônimo / Nenhum</option>' + 
-                        doadores.map(d => `<option value="${d.id_doador}">${d.nome_doador}</option>`).join('');
+                    const data = await resDoad.json();
+                    document.getElementById('histDoadorId').innerHTML = '<option value="">Anônimo / Nenhum</option>' + data.map(d => `<option value="${d.id_doador}">${d.nome_doador}</option>`).join('');
                 }
             } catch (e) { console.error("Erro selects:", e); }
         }
@@ -254,12 +258,9 @@
             document.getElementById('searchInput').value = ''; 
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
-
             document.getElementById('livros-container').classList.toggle('hidden', tab !== 'livros');
             document.getElementById('historico-container').classList.toggle('hidden', tab !== 'historico');
-
             document.getElementById('btnNew').innerText = tab === 'livros' ? '+ Novo Livro' : '+ Novo Item Histórico';
-            
             if(tab === 'livros') loadLivros(); else loadHistorico();
         }
 
@@ -268,30 +269,88 @@
                 const url = query ? `${API}/livros?q=${encodeURIComponent(query)}` : `${API}/livros`;
                 const res = await fetch(url);
                 const data = await res.json();
-                
+                window.currentData.livros = data; // Salva globalmente
+
                 if (data.length === 0) {
                     document.getElementById('livros-container').innerHTML = `<div class="empty-state">Nada encontrado.</div>`;
                     document.getElementById('loading').style.display = 'none';
                     return;
                 }
 
-                document.getElementById('livros-container').innerHTML = data.map(l => `
+                document.getElementById('livros-container').innerHTML = data.map(l => {
+                    const jsonItem = JSON.stringify(l).replace(/'/g, "&#39;");
+                    
+                    // estoque
+                    const limiteAtingido = l.quantidade_disponivel <= l.quantidade_minima;
+                    
+                    let statusColor = '#27ae60'; // Verde
+                    let statusMsg = 'Disponível';
+                    if (limiteAtingido) {
+                        statusColor = '#e67e22'; // Laranja
+                        statusMsg = 'Apenas Reserva';
+                    }
+                    if (l.quantidade_disponivel === 0) {
+                        statusColor = '#c0392b'; // Vermelho
+                        statusMsg = 'Esgotado';
+                    }
+
+                    return `
                     <div class="card">
-                        <div class="card-header"><span>📖 Livro</span> <span>${l.ano_publicacao || 'S/D'}</span></div>
+                        ${l.url_capa ? `<div style="height: 200px; overflow: hidden; cursor: pointer;" onclick='openDetails(${l.id_livro}, "livro")'><img src="${l.url_capa}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"></div>` : ''}
+                        
+                        <div class="card-header">
+                            <span>📖 Livro</span> 
+                            <span>${l.ano_publicacao || 'S/D'}</span>
+                        </div>
+                        
                         <div class="card-body">
-                            <h3 class="card-title">${l.titulo}</h3>
+                            <h3 class="card-title" style="cursor:pointer;" onclick='openDetails(${l.id_livro}, "livro")'>${l.titulo}</h3>
                             <p class="card-text"><strong>Autor:</strong> ${l.nome_autor || '?'}</p>
-                            <p class="card-text"><strong>Editora:</strong> ${l.nome_editora || '?'}</p>
+                            
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; border-left: 4px solid ${statusColor}">
+                                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:5px;">
+                                    <span>Estante: <strong>${l.quantidade_disponivel}</strong> / ${l.quantidade_total}</span>
+                                    <span style="color:${statusColor}; font-weight:bold;">${statusMsg}</span>
+                                </div>
+                                <div style="display:flex; gap:5px; justify-content:flex-end;">
+                                    <button class="btn" style="padding: 2px 10px; background: #e74c3c; color: white;" 
+                                            title="Emprestar" onclick="movimentarEstoque(${l.id_livro}, 'emprestar')"
+                                            ${limiteAtingido ? 'disabled style="opacity:0.5; cursor:not-allowed; background:#999;"' : ''}>
+                                            SAÍDA (-)
+                                    </button>
+                                    <button class="btn" style="padding: 2px 10px; background: #27ae60; color: white;" 
+                                            title="Devolver" onclick="movimentarEstoque(${l.id_livro}, 'devolver')">
+                                            RETORNO (+)
+                                    </button>
+                                </div>
+                                <div style="font-size:0.7rem; color:#999; margin-top:5px; text-align:right;">Reserva Técnica: ${l.quantidade_minima}</div>
+                            </div>
+
                             <p class="card-text" style="color:#7f8c8d; font-size:0.8rem">Cod: ${l.chamada}</p>
                         </div>
+                        
                         <div class="card-actions">
-                            <button class="btn btn-edit" onclick='openEditLivro(${JSON.stringify(l)})'>Editar</button>
+                            <button class="btn btn-view" onclick='openDetails(${l.id_livro}, "livro")'>Ver</button>
+                            <button class="btn btn-edit" onclick='openEditLivro(${l.id_livro})'>Editar</button>
                             <button class="btn btn-danger" onclick="deleteItem('livros', ${l.id_livro})">Excluir</button>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
                 document.getElementById('loading').style.display = 'none';
             } catch (e) { document.getElementById('loading').innerText = 'Erro conexão'; }
+        }
+
+        async function movimentarEstoque(id, acao) {
+            try {
+                const res = await fetch(`${API}/livros/${id}/${acao}`, { method: 'PATCH' });
+                if (res.ok) {
+                    loadLivros(document.getElementById('searchInput').value);
+                } else {
+                    const err = await res.json();
+                    alert(err.error || 'Erro ao atualizar estoque');
+                }
+            } catch (e) { console.error(e); alert('Erro de conexão'); }
         }
 
         async function loadHistorico(query = '') {
@@ -299,30 +358,86 @@
                 const url = query ? `${API}/historico?q=${encodeURIComponent(query)}` : `${API}/historico`;
                 const res = await fetch(url);
                 const data = await res.json();
-                
+                window.currentData.historico = data; // Salva globalmente
+
                 if (data.length === 0) {
                     document.getElementById('historico-container').innerHTML = `<div class="empty-state">Nada encontrado.</div>`;
                     return;
                 }
-                document.getElementById('historico-container').innerHTML = data.map(h => `
+                document.getElementById('historico-container').innerHTML = data.map(h => {
+                    return `
                     <div class="card">
                         <div class="card-header" style="background: #2c3e50;">
                             <span>📜 ${h.tipo_item}</span>
                             ${h.foi_digitalizado ? '<span class="badge">Digitalizado</span>' : '<span class="badge badge-missing">Físico</span>'}
                         </div>
+                        ${h.caminho_arquivo ? `<div style="padding: 10px; text-align: center; cursor: pointer;" onclick='openDetails(${h.id_item}, "historico")'><img src="${h.caminho_arquivo}" style="max-width: 100%; max-height: 200px; border-radius: 4px;" onerror="this.style.display='none'"></div>` : ''}
                         <div class="card-body">
-                            <h3 class="card-title">${h.titulo}</h3>
-                            <p class="card-text">${h.descricao || ''}</p>
+                            <h3 class="card-title" style="cursor:pointer;" onclick='openDetails(${h.id_item}, "historico")'>${h.titulo}</h3>
+                            <p class="card-text">${h.descricao ? h.descricao.substring(0, 100) + '...' : ''}</p>
                             <p class="card-text"><strong>Data:</strong> ${h.data_item ? new Date(h.data_item).toLocaleDateString() : 'S/D'}</p>
-                            <p class="card-text" style="font-size:0.8rem"><strong>Doador:</strong> ${h.nome_doador || 'Anônimo/Desconhecido'}</p>
                         </div>
                         <div class="card-actions">
-                            <button class="btn btn-edit" onclick='openEditHistorico(${JSON.stringify(h)})'>Editar</button>
+                            <button class="btn btn-view" onclick='openDetails(${h.id_item}, "historico")'>Ver</button>
+                            <button class="btn btn-edit" onclick='openEditHistorico(${h.id_item})'>Editar</button>
                             <button class="btn btn-danger" onclick="deleteItem('historico', ${h.id_item})">Excluir</button>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
             } catch (e) { console.error(e); }
+        }
+
+        function openDetails(id, type) {
+            // Busca o item no array global usando o ID
+            const list = type === 'livro' ? window.currentData.livros : window.currentData.historico;
+            const item = list.find(i => (type === 'livro' ? i.id_livro : i.id_item) === id);
+
+            if(!item) return;
+
+            const imgEl = document.getElementById('detalheImg');
+            const tituloEl = document.getElementById('detalheTitulo');
+            const conteudoEl = document.getElementById('detalheConteudo');
+            
+            const imgUrl = (type === 'livro') ? item.url_capa : item.caminho_arquivo;
+            
+            imgEl.style.display = 'block';
+            if(imgEl.nextElementSibling) imgEl.nextElementSibling.style.display = 'none';
+
+            if (imgUrl) imgEl.src = imgUrl;
+            else {
+                imgEl.style.display = 'none';
+                imgEl.nextElementSibling.style.display = 'flex'; 
+                imgEl.nextElementSibling.style.height = '200px';
+                imgEl.nextElementSibling.style.alignItems = 'center';
+                imgEl.nextElementSibling.style.justifyContent = 'center';
+            }
+
+            tituloEl.innerText = item.titulo;
+            let html = '';
+
+            if (type === 'livro') {
+                html += `<div class="info-row"><strong>Chamada:</strong> ${item.chamada || '-'}</div>`;
+                html += `<div class="info-row"><strong>Autor:</strong> ${item.nome_autor || 'Desconhecido'}</div>`;
+                html += `<div class="info-row"><strong>Editora:</strong> ${item.nome_editora || 'Desconhecida'}</div>`;
+                html += `<div class="info-row"><strong>Ano:</strong> ${item.ano_publicacao || '-'}</div>`;
+                html += `<div class="info-row"><strong>Estoque Total:</strong> ${item.quantidade_total}</div>`;
+                html += `<div class="info-row"><strong>Disponível:</strong> ${item.quantidade_disponivel}</div>`;
+                html += `<div class="info-row"><strong>Reserva Técnica:</strong> ${item.quantidade_minima} (Não circula)</div>`;
+            } else {
+                const dataFormatada = item.data_item ? new Date(item.data_item).toLocaleDateString() : 'Não informada';
+                html += `<div class="info-row"><strong>Tipo:</strong> ${item.tipo_item}</div>`;
+                html += `<div class="info-row"><strong>Data:</strong> ${dataFormatada}</div>`;
+                html += `<div class="info-row"><strong>Doador:</strong> ${item.nome_doador || 'Anônimo'}</div>`;
+                if (item.descricao) {
+                    html += `<div class="info-row" style="border:none; margin-top: 15px;"><strong>Descrição Completa:</strong><br><p style="margin-top:5px; color:#555;">${item.descricao}</p></div>`;
+                }
+                if (item.caminho_arquivo) {
+                    html += `<div style="margin-top: 20px;"><a href="${item.caminho_arquivo}" target="_blank" class="btn btn-primary" style="text-decoration:none;">Abrir Arquivo Original ↗</a></div>`;
+                }
+            }
+            conteudoEl.innerHTML = html;
+            document.getElementById('modalDetalhes').style.display = 'block';
         }
 
         // --- FORMS ---
@@ -333,6 +448,9 @@
                 titulo: document.getElementById('livroTitulo').value,
                 ano_publicacao: document.getElementById('livroAno').value,
                 chamada: document.getElementById('livroChamada').value,
+                url_capa: document.getElementById('livroCapa').value,
+                quantidade_total: document.getElementById('livroQtd').value,
+                quantidade_minima: document.getElementById('livroMin').value,
                 id_autor: document.getElementById('livroAutorId').value,
                 id_editora: document.getElementById('livroEditoraId').value
             };
@@ -348,7 +466,8 @@
                 data_item: document.getElementById('histData').value,
                 descricao: document.getElementById('histDescricao').value,
                 id_doador: document.getElementById('histDoadorId').value || null,
-                foi_digitalizado: document.getElementById('histDigitalizado').checked
+                foi_digitalizado: document.getElementById('histDigitalizado').checked,
+                caminho_arquivo: document.getElementById('histArquivo').value
             };
             await sendData('historico', body, id);
         };
@@ -376,31 +495,44 @@
             isEditing = false;
             if(currentTab === 'livros') {
                 document.getElementById('formLivro').reset();
+                // Reset defaults
+                document.getElementById('livroQtd').value = 1;
+                document.getElementById('livroMin').value = 1;
                 populateSelects(); 
                 document.getElementById('modalLivroTitle').innerText = 'Novo Livro';
                 document.getElementById('modalLivro').style.display = 'block';
             } else {
                 document.getElementById('formHistorico').reset();
-                populateSelects(); // Atualiza doadores também
+                populateSelects(); 
                 document.getElementById('modalHistTitle').innerText = 'Novo Item Histórico';
                 document.getElementById('modalHistorico').style.display = 'block';
             }
         }
-        function openEditLivro(item) {
+
+        function openEditLivro(id) {
             isEditing = true;
+            const item = window.currentData.livros.find(i => i.id_livro === id);
+            if(!item) return;
+
             populateSelects().then(() => {
                 document.getElementById('livroId').value = item.id_livro;
                 document.getElementById('livroTitulo').value = item.titulo;
                 document.getElementById('livroAno').value = item.ano_publicacao;
                 document.getElementById('livroChamada').value = item.chamada;
+                document.getElementById('livroCapa').value = item.url_capa || '';
+                document.getElementById('livroQtd').value = item.quantidade_total;
+                document.getElementById('livroMin').value = item.quantidade_minima;
                 document.getElementById('livroAutorId').value = item.id_autor;
                 document.getElementById('livroEditoraId').value = item.id_editora;
                 document.getElementById('modalLivroTitle').innerText = 'Editar Livro';
                 document.getElementById('modalLivro').style.display = 'block';
             });
         }
-        function openEditHistorico(item) {
+        function openEditHistorico(id) {
             isEditing = true;
+            const item = window.currentData.historico.find(i => i.id_item === id);
+            if(!item) return;
+
             populateSelects().then(() => {
                 document.getElementById('histId').value = item.id_item;
                 document.getElementById('histTitulo').value = item.titulo;
@@ -409,6 +541,7 @@
                 document.getElementById('histDescricao').value = item.descricao;
                 document.getElementById('histDoadorId').value = item.id_doador;
                 document.getElementById('histDigitalizado').checked = item.foi_digitalizado;
+                document.getElementById('histArquivo').value = item.caminho_arquivo || '';
                 document.getElementById('modalHistTitle').innerText = 'Editar Item Histórico';
                 document.getElementById('modalHistorico').style.display = 'block';
             });
